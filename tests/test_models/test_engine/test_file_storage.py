@@ -1,72 +1,81 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
-Unitest for the FileStorage class
+Unittest Module for FileStorage
 """
 import unittest
-import models
-from models.engine.file_storage import FileStorage
-from models.base_model import BaseModel
+from models import storage
 from models.user import User
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.place import Place
-from models.review import Review
+from models.base_model import BaseModel
+from models.engine import file_storage
+from models.engine.file_storage import FileStorage
+import os
 
 
 class TestFileStorage(unittest.TestCase):
+    ''' Unittest for FileStorage class '''
 
-    def test_doc(self):
-        """claass ann method docstrings"""
+    def test_Instantiation(self):
+        ''' checks instance is of class BaseModel '''
+        obj = FileStorage()
+        self.assertIsInstance(obj, FileStorage)
 
-        self.assertIsNotNone(models.engine.file_storage.FileStorage.__doc__)
-        self.assertIsNotNone(models.engine.file_storage.__doc__)
-        self.assertIsNotNone(models.engine.file_storage.FileStorage.
-                             all.__doc__)
-        self.assertIsNotNone(models.engine.file_storage.FileStorage.
-                             __init__.__doc__)
-        self.assertIsNotNone(models.engine.file_storage.FileStorage.
-                             new.__doc__)
-        self.assertIsNotNone(models.engine.file_storage.FileStorage.
-                             save.__doc__)
-        self.assertIsNotNone(models.engine.file_storage.FileStorage.
-                             reload.__doc__)
-
-    def test_classes(self):
-        """check if classes are created"""
-
-        self.assertIsInstance(models.engine.file_storage.FileStorage(),
-                              models.engine.file_storage.FileStorage)
-
-    def test_all(self):
-        """check if all method is working"""
-
-        self.assertIsNotNone(models.engine.file_storage.FileStorage().all)
+    def test_Access(self):
+        ''' test read-write access permissions '''
+        rd = os.access('models/engine/file_storage.py', os.R_OK)
+        self.assertTrue(rd)
+        wr = os.access('models/engine/file_storage.py', os.W_OK)
+        self.assertTrue(wr)
+        ex = os.access('models/engine/file_storage.py', os.X_OK)
+        self.assertFalse(ex)
 
     def test_new(self):
-        """check if new method is working"""
-
-        self.assertIsNotNone(models.engine.file_storage.FileStorage().new)
-
-    def test_save(self):
-        """check if save method is working"""
-
-        self.assertIsNotNone(models.engine.file_storage.FileStorage().save)
+        """
+        Tests method: new (saves new object into dictionary)
+        """
+        m_storage = FileStorage()
+        instances_dic = m_storage.all()
+        Aman = User()
+        Aman.id = 999999
+        Aman.name = "Aman"
+        m_storage.new(Aman)
+        key = Aman.__class__.__name__ + "." + str(Aman.id)
+        self.assertIsNotNone(instances_dic[key])
 
     def test_reload(self):
-        """check if reload method is working"""
+        """
+        Tests method: reload (reloads objects from string file)
+        """
+        a_storage = FileStorage()
+        try:
+            os.remove("file.json")
+        except:
+            pass
+        with open("file.json", "w") as f:
+            f.write("{}")
+        with open("file.json", "r") as r:
+            for line in r:
+                self.assertEqual(line, "{}")
+        self.assertIs(a_storage.reload(), None)
 
-        self.assertIsNotNone(models.engine.file_storage.FileStorage().reload)
+    def test_funcdocs(self):
+        ''' testing functions docstring '''
+        for func in dir(FileStorage):
+            self.assertTrue(len(func.__doc__) > 0)
 
-    def test_all_method(self):
-        """check if all method is working"""
-
-        self.assertIsNotNone(models.engine.file_storage.FileStorage().all())
-
-    def test_models_all(self):
-        """check if all method is working"""
-
-        self.assertIsNotNone(models.storage.all())
+    def test_save(self):
+        ''' tests save method'''
+        obj = FileStorage()
+        new_obj = BaseModel()
+        obj.new(new_obj)
+        dict1 = obj.all()
+        obj.save()
+        obj.reload()
+        dict2 = obj.all()
+        for key in dict1:
+            key1 = key
+        for key in dict2:
+            key2 = key
+        self.assertEqual(dict1[key1].to_dict(), dict2[key2].to_dict())
 
 
 if __name__ == '__main__':

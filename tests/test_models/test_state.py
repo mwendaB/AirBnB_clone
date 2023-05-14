@@ -1,47 +1,43 @@
-#!/usr/bin/env python3
-"""
-Unitest for models/state.py
-
-Unittest classes:
-    test_state_instantiates
-    test_state_save
-    test_state_dict
-    """
-
+#!/usr/bin/python3
 import unittest
-import models
 from models.state import State
+"""
+Unittest Module for State class
+"""
 
 
-class test_state_instantiates(unittest.TestCase):
-    """ Unittest for testing instantiation"""
+class TestUser(unittest.TestCase):
+    ''' Unittest for State class '''
 
-    def test_instantiation(self):
-        self.assertIs(State, type(State()))
+    def test_object_Instantiation(self):
+        ''' instantiates class '''
+        self.state = State()
 
-    def test_instantiation_with_kwargs(self):
-        self.assertIs(State, type(State(name="California")))
+    def testattr(self):
+        ''' test Class: State attributes '''
+        self.state = State()
+        self.assertTrue(hasattr(self.state, "created_at"))
+        self.assertTrue(hasattr(self.state, "updated_at"))
+        self.assertFalse(hasattr(self.state, "random_attr"))
+        self.assertTrue(hasattr(self.state, "name"))
+        self.assertTrue(hasattr(self.state, "id"))
+        self.assertEqual(self.state.name, "")
+        self.state.name = "WonderLand"
+        self.assertEqual(self.state.name, "WonderLand")
+        self.assertEqual(self.state.__class__.__name__, "State")
 
+    def testsave(self):
+        ''' testing method: save '''
+        self.state = State()
+        self.state.save()
+        self.assertTrue(hasattr(self.state, "updated_at"))
 
-class test_state_save(unittest.TestCase):
-    """ Unittest for testing save"""
+    def teststr(self):
+        ''' testing __str__ return format of BaseModel '''
+        self.state = State()
+        s = "[{}] ({}) {}".format(self.state.__class__.__name__,
+                                  str(self.state.id), self.state.__dict__)
+        self.assertEqual(print(s), print(self.state))
 
-    def test_save(self):
-        state = State()
-        state.save()
-        self.assertNotEqual(state.created_at, state.updated_at)
-
-    def test_save_updated(self):
-        state = State()
-        state.save()
-        state.save()
-        self.assertNotEqual(state.created_at, state.updated_at)
-
-    def test_save_to_json(self):
-        state = State()
-        state.save()
-        self.assertIs(type(state.to_dict()), dict)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

@@ -1,23 +1,18 @@
-#!/usr/bin/env python3
-""" Class Review"""
+#!/usr/bin/python3
 from models.base_model import BaseModel
+from models.place import Place
+from models.user import User
+"""
+Module class: Review
+"""
 
 
 class Review(BaseModel):
-    """ Public class attributes:
-
-    place_id: string - (str): Place.id
-    user_id: string - (str): User.id
-    text: string - (str): text of the review
-    """
+    """definition for class Review"""
+    text = ""
     place_id = ""
     user_id = ""
-    text = ""
 
     def __init__(self, *args, **kwargs):
-        """ Initialize a Review instance
-            Args:
-                *args: list of strings
-                **kwargs: dictionary of strings
-        """
-        super().__init__(*args, **kwargs)
+        """ constructor method """
+        super().__init__(self, *args, **kwargs)
